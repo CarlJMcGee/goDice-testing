@@ -5,6 +5,7 @@ import { setNumBetween, numBetween } from "@carljmcgee/lol-random";
 import DieDisplay from "./components/DieDisplay";
 import { LedColor } from "go-dice-api";
 import TestDisplay from "./components/TestDisplay";
+import GenesysDisplay from "./components/GenesysDisplay";
 
 function App() {
   const [dice, requestDie] = useDiceSet();
@@ -34,9 +35,7 @@ function App() {
   });
 
   function createDiceHandler() {
-    console.log(`Start`);
-
-    const seeds = setNumBetween(5, 1, 5);
+    const seeds = setNumBetween(3, 1, 100);
     let dice: {
       id: string;
       color: keyof typeof LedColor;
@@ -57,8 +56,7 @@ function App() {
       });
     });
 
-    setDice(dice);
-    console.log(`End`);
+    setDice([...testDice, ...dice]);
   }
 
   return (
@@ -79,12 +77,16 @@ function App() {
         >
           Add Test Die
         </button>
-        {testDice.map((die, i) => (
-          <TestDisplay testDie={die} index={i} />
-        ))}
-        {dice.map((die, i) => (
-          <DieDisplay die={die} index={i} />
-        ))}
+        <div className="grid grid-cols-1 md:grid-cols-3">
+          {testDice.map((die, i) => (
+            <GenesysDisplay testDie={die} index={i} />
+          ))}
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-3">
+          {dice.map((die, i) => (
+            <DieDisplay die={die} index={i} />
+          ))}
+        </div>
         {addedDiceFail ? (
           <h3 className="text-red-500">Failed to connect to Dice</h3>
         ) : null}

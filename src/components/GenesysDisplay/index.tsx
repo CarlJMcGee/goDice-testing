@@ -1,8 +1,9 @@
 import { numBetween } from "@carljmcgee/lol-random";
 import { MapPlus } from "@carljmcgee/set-map-plus";
 import { asyncTimeOut } from "@carljmcgee/timey-wimey";
-import { Die, LedColor } from "go-dice-api";
-import { useEffect, useState } from "react";
+import { LedColor } from "go-dice-api";
+import { useState } from "react";
+import { useProficiencyDie } from "../../utils/genesysDice";
 
 export interface IDieDisplayProps {
   testDie: {
@@ -15,7 +16,10 @@ export interface IDieDisplayProps {
   index: number;
 }
 
-export default function TestDisplay({ testDie, index: i }: IDieDisplayProps) {
+export default function GenesysDisplay({
+  testDie,
+  index: i,
+}: IDieDisplayProps) {
   const [label, setLabel] = useState(`Die #${i + 1}`);
   const [editing, setEditing] = useState(false);
 
@@ -23,6 +27,8 @@ export default function TestDisplay({ testDie, index: i }: IDieDisplayProps) {
   const [batteryLvl, setBattery] = useState(testDie?.battery);
   const [rolling, setRolling] = useState(false);
   const [value, setValue] = useState<number | undefined>(testDie?.value);
+
+  const proficiencyDie = useProficiencyDie(value);
 
   const borderColorMap = MapPlus<keyof typeof LedColor, string>([
     ["BLUE", "border-blue-400"],
@@ -85,7 +91,9 @@ export default function TestDisplay({ testDie, index: i }: IDieDisplayProps) {
         </h3>
         <h3>Color: {dieColor}</h3>
         {rolling ? <h3>Rolling...</h3> : null}
-        {!rolling && value ? <h3>You rolled a {value}</h3> : null}
+        {!rolling && value ? (
+          <h3>You rolled a {proficiencyDie.join(" + ")}!</h3>
+        ) : null}
       </div>
       <button
         className={`border-2 py-2 ${borderColorMap.get(dieColor)}`}
