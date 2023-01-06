@@ -12,10 +12,11 @@
     "@carljmcgee/lol-random": "^1.2.0",
     "@carljmcgee/set-map-plus": "^1.0.1",
     "@carljmcgee/timey-wimey": "^1.0.1",
+    "@types/web-bluetooth": "^0.0.16",
     "go-dice-api": "^0.3.2",
     "go-dice-react": "^0.1.0",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react": "^0.0.0-experimental-5379b6123-20230105",
+    "react-dom": "^0.0.0-experimental-5379b6123-20230105"
   },
   "devDependencies": {
     "@types/react": "^18.0.26",

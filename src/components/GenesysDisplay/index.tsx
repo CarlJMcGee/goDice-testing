@@ -2,8 +2,14 @@ import { numBetween } from "@carljmcgee/lol-random";
 import { MapPlus } from "@carljmcgee/set-map-plus";
 import { asyncTimeOut } from "@carljmcgee/timey-wimey";
 import { LedColor } from "go-dice-api";
-import { useState } from "react";
-import { useProficiencyDie } from "../../utils/genesysDice";
+import { useEffect, useState } from "react";
+import {
+  DieFaces,
+  negDieTypes,
+  posDieFaces,
+  posDieTypes,
+} from "../../types/genesysDice";
+import { useGenesysValue, useProficiencyDie } from "../../utils/genesysDice";
 
 export interface IDieDisplayProps {
   testDie: {
@@ -14,21 +20,24 @@ export interface IDieDisplayProps {
     value: number;
   };
   index: number;
+  addToPos: React.Dispatch<React.SetStateAction<posDieFaces[]>>;
 }
 
-export default function GenesysDisplay({
+export default function GenesysDie({
   testDie,
   index: i,
+  addToPos,
 }: IDieDisplayProps) {
   const [label, setLabel] = useState(`Die #${i + 1}`);
   const [editing, setEditing] = useState(false);
+  const [dieType, setDieType] = useState<posDieTypes | negDieTypes>("ability");
 
   const dieColor = testDie?.color;
   const [batteryLvl, setBattery] = useState(testDie?.battery);
   const [rolling, setRolling] = useState(false);
   const [value, setValue] = useState<number | undefined>(testDie?.value);
 
-  const proficiencyDie = useProficiencyDie(value);
+  const genesysValue = useGenesysValue(value, "ability");
 
   const borderColorMap = MapPlus<keyof typeof LedColor, string>([
     ["BLUE", "border-blue-400"],
@@ -50,6 +59,14 @@ export default function GenesysDisplay({
       setValue(numBetween(1, 6));
     }, 2000);
   }
+
+  useEffect(() => {
+    if (genesysValue.find((value) => value === "blank")) {
+      return;
+    }
+
+    addToPos((posValues) => [...posValues, ...genesysValue]);
+  }, [genesysValue]);
 
   return (
     <div
@@ -92,7 +109,13 @@ export default function GenesysDisplay({
         <h3>Color: {dieColor}</h3>
         {rolling ? <h3>Rolling...</h3> : null}
         {!rolling && value ? (
-          <h3>You rolled a {proficiencyDie.join(" + ")}!</h3>
+          <h3>
+            You rolled{" "}
+            <span className="font-bold">
+              {genesysValue.join(" + ").toLocaleUpperCase()}
+            </span>
+            !
+          </h3>
         ) : null}
       </div>
       <button

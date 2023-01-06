@@ -7,7 +7,7 @@ import {
   useDieColor,
   useFaceValue,
   useRolling,
-} from "../../utils/go-dice";
+} from "../../utils/go-dice-hooks";
 
 export interface IDieDisplayProps {
   die: Die;
@@ -22,7 +22,7 @@ export interface IDieDisplayProps {
 }
 
 const borderColorMap = MapPlus<Color, string>([
-  [Color[0], "border-white"],
+  [Color[0], "border-black"],
   [Color[1], "border-red-400"],
   [Color[2], "border-green-400"],
   [Color[3], "border-blue-400"],
@@ -38,11 +38,7 @@ const bgColorMap = MapPlus<Color, string>([
   [Color[5], "bg-orange-200"],
 ]);
 
-export default function DieDisplay({
-  die,
-  index: i,
-  testDie,
-}: IDieDisplayProps) {
+export default function DieDisplay({ die, index: i }: IDieDisplayProps) {
   const [label, setLabel] = useState(`Die #${i}`);
   const [editing, setEditing] = useState(false);
 

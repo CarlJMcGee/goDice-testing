@@ -10,18 +10,13 @@ export function useDiceSet(): [Die[], () => void] {
   useEffect(() => {
     const onConnect = async (die: Die) => {
       // add die to map
-      setDice([...connectedDice, die]);
+      setDice((dice) => [...dice, die]);
 
-      // flash green led
-      useLEDPulse(die, "GREEN", 1, 2);
-      // die.setLed(LedColor.GREEN);
-      // await asyncTimeOut(() => {
-      //   die.setLed(LedColor.OFF);
-      // }, 1000);
-      // die.setLed(LedColor.GREEN);
-      // await asyncTimeOut(() => {
-      //   die.setLed(LedColor.OFF);
-      // }, 1000);
+      // flash blue led
+      die.setLed([0, 0, 255]);
+      const blink = setTimeout(() => {
+        die.setLed(LedColor.OFF);
+      }, 1000);
     };
     diceSet.on("connected", onConnect);
 
@@ -31,21 +26,19 @@ export function useDiceSet(): [Die[], () => void] {
   return [connectedDice, requestDie];
 }
 
-export function useDieColor(die: Die) {
-  const [color, setColor] = useState<Color | undefined>();
+export function useDieColor(die: Die): Color {
+  const [color, setColor] = useState<Color>(Color[0]);
 
   useEffect(() => {
-    die.getColor().then((dieColor) => {
-      setColor(dieColor);
-    });
-  }, [die]);
+    die.getColor().then((paint) => setColor(paint));
+  }, []);
 
   return color;
 }
 
 export function useLED(die: Die, color: keyof typeof LedColor): void {
   useEffect(() => {
-    die.setLed(color);
+    die.setLed(LedColor[color]);
   });
 }
 
@@ -57,7 +50,7 @@ export async function useLEDPulse(
 ): Promise<void> {
   const interval = intervalSec * 1000;
   for (let i = 1; i <= times; i++) {
-    die.setLed(color);
+    die.setLed(LedColor[color]);
     await asyncTimeOut(() => {
       die.setLed(LedColor.OFF);
     }, interval);

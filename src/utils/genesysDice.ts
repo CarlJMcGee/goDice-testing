@@ -1,6 +1,11 @@
 import { MapPlus } from "@carljmcgee/set-map-plus";
 import { useEffect, useState } from "react";
-import type { negDieFaces, posDieFaces } from "../types/genesysDice";
+import type {
+  negDieFaces,
+  negDieTypes,
+  posDieFaces,
+  posDieTypes,
+} from "../types/genesysDice";
 
 export const proficiencyDie = MapPlus<number, posDieFaces[]>([
   [1, ["triumph"]],
@@ -156,4 +161,33 @@ export function useSetbackDie(value: number | undefined): negDieFaces[] {
   }, [value]);
 
   return faceValue;
+}
+export function useGenesysValue(
+  value: number | undefined,
+  dieType: posDieTypes
+): posDieFaces[];
+export function useGenesysValue(
+  value: number | undefined,
+  dieType: negDieTypes
+): negDieFaces[];
+export function useGenesysValue(
+  value: number | undefined,
+  dieType: posDieTypes | negDieTypes
+): posDieFaces[] | negDieFaces[] {
+  if (dieType === "proficiency") {
+    return useProficiencyDie(value);
+  }
+  if (dieType === "ability") {
+    return useAbilityDie(value);
+  }
+  if (dieType === "boost") {
+    return useBoostDie(value);
+  }
+  if (dieType === "challenge") {
+    return useChallengeDie(value);
+  }
+  if (dieType === "difficulty") {
+    return useDifficultyDie(value);
+  }
+  return useSetbackDie(value);
 }

@@ -1,11 +1,12 @@
 import "./App.css";
-import { useDiceSet } from "./utils/go-dice";
+import { useDiceSet } from "./utils/go-dice-hooks";
 import { useEffect, useState } from "react";
 import { setNumBetween, numBetween } from "@carljmcgee/lol-random";
 import DieDisplay from "./components/DieDisplay";
 import { LedColor } from "go-dice-api";
 import TestDisplay from "./components/TestDisplay";
-import GenesysDisplay from "./components/GenesysDisplay";
+import GenesysDie from "./components/GenesysDisplay";
+import { DieFaces, posDieFaces } from "./types/genesysDice";
 
 function App() {
   const [dice, requestDie] = useDiceSet();
@@ -18,21 +19,13 @@ function App() {
       value: number;
     }[]
   >([]);
-  const [addedDice, setAddedDice] = useState(false);
-  const [addedDiceFail, setAddedDiceFail] = useState(false);
+  const [posValues, setPosValues] = useState<posDieFaces[]>([]);
+  const [negValues, setNegValues] = useState<posDieFaces[]>([]);
   useEffect(() => {
     console.log(dice);
-    console.log(testDice);
-  }, [dice, testDice]);
-
-  useEffect(() => {
-    if (addedDice) {
-      dice.length === 0 ? setAddedDiceFail(true) : null;
-      return;
-    }
-
-    setAddedDiceFail(false);
-  });
+    // console.log(posValues);
+    // console.log(negValues);
+  }, [dice, testDice, posValues]);
 
   function createDiceHandler() {
     const seeds = setNumBetween(3, 1, 100);
@@ -65,7 +58,6 @@ function App() {
         <button
           className="text-blue-400 my-3 px-5 py-3 rounded-md bg-gray-800 hover:border-2 hover:border-cyan-400 hover:text-blue-200 hover:bg-slate-600"
           onClick={() => {
-            setAddedDice(true);
             requestDie();
           }}
         >
@@ -79,17 +71,19 @@ function App() {
         </button>
         <div className="grid grid-cols-1 md:grid-cols-3">
           {testDice.map((die, i) => (
-            <GenesysDisplay testDie={die} index={i} />
+            <GenesysDie
+              key={`${die.id}-testing`}
+              testDie={die}
+              index={i}
+              addToPos={setPosValues}
+            />
           ))}
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3">
           {dice.map((die, i) => (
-            <DieDisplay die={die} index={i} />
+            <DieDisplay key={die.id} die={die} index={i} />
           ))}
         </div>
-        {addedDiceFail ? (
-          <h3 className="text-red-500">Failed to connect to Dice</h3>
-        ) : null}
       </div>
     </div>
   );
