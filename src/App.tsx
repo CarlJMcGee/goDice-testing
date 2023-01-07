@@ -1,10 +1,9 @@
 import "./App.css";
-import { useDiceSet } from "./utils/go-dice-hooks";
+import { useDiceSet } from "./utils/GoDiceReact";
 import { useEffect, useState } from "react";
 import { setNumBetween, numBetween } from "@carljmcgee/lol-random";
 import DieDisplay from "./components/DieDisplay";
-import { LedColor } from "go-dice-api";
-import TestDisplay from "./components/TestDisplay";
+import { LedColor } from "./utils/GoDiceApi";
 import GenesysDie from "./components/GenesysDisplay";
 import { DieFaces, posDieFaces } from "./types/genesysDice";
 

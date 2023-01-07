@@ -1,7 +1,7 @@
 import { numBetween } from "@carljmcgee/lol-random";
 import { MapPlus } from "@carljmcgee/set-map-plus";
 import { asyncTimeOut } from "@carljmcgee/timey-wimey";
-import { LedColor } from "go-dice-api";
+import { LedColor } from "../../utils/GoDiceApi";
 import { useEffect, useState } from "react";
 import {
   DieFaces,
