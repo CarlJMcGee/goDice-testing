@@ -1,13 +1,14 @@
+import { useEffect, useState } from "react";
 import { MapPlus } from "@carljmcgee/set-map-plus";
 import { Die, LedColor } from "go-dice-api";
-import { Color } from "go-dice-api/src/die";
-import { useState } from "react";
 import {
-  useBatteryLvl,
-  useDieColor,
-  useFaceValue,
+  useDieValue,
   useRolling,
-} from "../../utils/go-dice-hooks";
+  useDieColor,
+  useBatteryLevel,
+} from "go-dice-react";
+import { DieTypes } from "go-dice-api/src/die";
+import { Color } from "../../types/die";
 
 export interface IDieDisplayProps {
   die: Die;
@@ -21,31 +22,36 @@ export interface IDieDisplayProps {
   index: number;
 }
 
-const borderColorMap = MapPlus<Color, string>([
-  [Color[0], "border-black"],
-  [Color[1], "border-red-400"],
-  [Color[2], "border-green-400"],
-  [Color[3], "border-blue-400"],
-  [Color[4], "border-yellow-400"],
-  [Color[5], "border-orange-400"],
+const borderColorMap = MapPlus<string, string>([
+  ["Black", "border-black"],
+  ["Red", "border-red-400"],
+  ["Green", "border-green-400"],
+  ["Blue", "border-blue-400"],
+  ["Yellow", "border-yellow-400"],
+  ["Orange", "border-orange-400"],
 ]);
-const bgColorMap = MapPlus<Color, string>([
-  [Color[0], "bg-gray-200"],
-  [Color[1], "bg-red-200"],
-  [Color[2], "bg-green-200"],
-  [Color[3], "bg-blue-200"],
-  [Color[4], "bg-yellow-200"],
-  [Color[5], "bg-orange-200"],
+const bgColorMap = MapPlus<string, string>([
+  ["Black", "bg-gray-200"],
+  ["Red", "bg-red-200"],
+  ["Green", "bg-green-200"],
+  ["Blue", "bg-blue-200"],
+  ["Yellow", "bg-yellow-200"],
+  ["Orange", "bg-orange-200"],
 ]);
 
 export default function DieDisplay({ die, index: i }: IDieDisplayProps) {
   const [label, setLabel] = useState(`Die #${i}`);
   const [editing, setEditing] = useState(false);
+  const [dieType, setDieType] = useState<DieTypes>("D6");
 
-  const dieColor = useDieColor(die);
-  const batteryLvl = useBatteryLvl(die);
+  const batteryLvl = useBatteryLevel(die);
+  const dieColor: Color = "Green"; //useDieColor(die);
   const rolling = useRolling(die);
-  const value = useFaceValue(die);
+  const value = useDieValue(die);
+
+  useEffect(() => {
+    die.setDieType(dieType);
+  }, [dieType]);
 
   return (
     <div
@@ -75,6 +81,24 @@ export default function DieDisplay({ die, index: i }: IDieDisplayProps) {
           {label}: {die.id}
         </h2>
       )}
+      <select
+        name="dieType"
+        id="dieType"
+        className={`bg-transparent border-2 ${
+          dieColor && borderColorMap.get(dieColor)
+        } hover:bg-black hover:bg-opacity-30`}
+        onChange={(e) => setDieType(e.target.value as DieTypes)}
+      >
+        <option value="D6" defaultChecked>
+          D6
+        </option>
+        <option value="D20">D20</option>
+        <option value="D10">D10</option>
+        <option value="D10X">D10X</option>
+        <option value="D4">D4</option>
+        <option value="D8">D8</option>
+        <option value="D12">D12</option>
+      </select>
       <h3>
         Battery currently at{" "}
         <span
@@ -87,7 +111,7 @@ export default function DieDisplay({ die, index: i }: IDieDisplayProps) {
           {batteryLvl}%
         </span>
       </h3>
-      <h3>Color: {dieColor}</h3>
+      {/* <h3>Color: {dieColor}</h3> */}
       {rolling ? <h3>Rolling...</h3> : null}
       {!rolling && value ? <h3>You rolled a {value}</h3> : null}
     </div>

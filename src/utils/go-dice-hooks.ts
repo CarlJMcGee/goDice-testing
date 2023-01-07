@@ -1,6 +1,6 @@
 import { asyncTimeOut } from "@carljmcgee/timey-wimey";
 import { diceSet, Die, LedColor } from "go-dice-api";
-import { Color } from "go-dice-api/src/die";
+import { Color } from "../types/die";
 import { useEffect, useState } from "react";
 
 export function useDiceSet(): [Die[], () => void] {
@@ -8,15 +8,12 @@ export function useDiceSet(): [Die[], () => void] {
   const requestDie = diceSet.requestDie;
 
   useEffect(() => {
-    const onConnect = async (die: Die) => {
+    const onConnect = (die: Die) => {
       // add die to map
       setDice((dice) => [...dice, die]);
 
       // flash blue led
-      die.setLed([0, 0, 255]);
-      const blink = setTimeout(() => {
-        die.setLed(LedColor.OFF);
-      }, 1000);
+      die.pulseLed(2, 50, 50, LedColor.BLUE);
     };
     diceSet.on("connected", onConnect);
 
@@ -26,12 +23,11 @@ export function useDiceSet(): [Die[], () => void] {
   return [connectedDice, requestDie];
 }
 
-export function useDieColor(die: Die): Color {
-  const [color, setColor] = useState<Color>(Color[0]);
+export async function useDieColor(die: Die): Promise<Color | undefined> {
+  const [color, setColor] = useState<Color>();
 
-  useEffect(() => {
-    die.getColor().then((paint) => setColor(paint));
-  }, []);
+  const paint = await die.getColor();
+  setColor(paint);
 
   return color;
 }
@@ -39,22 +35,19 @@ export function useDieColor(die: Die): Color {
 export function useLED(die: Die, color: keyof typeof LedColor): void {
   useEffect(() => {
     die.setLed(LedColor[color]);
-  });
+  }, [die]);
 }
 
-export async function useLEDPulse(
+export function useLEDPulse(
   die: Die,
-  color: keyof typeof LedColor,
-  intervalSec: number,
-  times: number
-): Promise<void> {
-  const interval = intervalSec * 1000;
-  for (let i = 1; i <= times; i++) {
-    die.setLed(LedColor[color]);
-    await asyncTimeOut(() => {
-      die.setLed(LedColor.OFF);
-    }, interval);
-  }
+  pulseCount: number,
+  onTime: number,
+  offTime: number,
+  RGB: [R: number, G: number, B: number]
+): void {
+  useEffect(() => {
+    die.pulseLed(pulseCount, onTime, offTime, RGB);
+  }, [die]);
 }
 
 export function useRolling(die: Die): boolean {
@@ -76,11 +69,16 @@ export function useRolling(die: Die): boolean {
   return rolling;
 }
 
-export function useFaceValue(die: Die) {
+export function useDieValue(die: Die) {
   const [value, setValue] = useState<number | undefined>();
 
   useEffect(() => {
     die.on("value", (value: number) => {
+      if (value === 0) {
+        die.instance.dieType === 3 ? setValue(100) : setValue(10);
+        return;
+      }
+
       setValue(value);
     });
   }, [die]);
