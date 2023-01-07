@@ -1,4 +1,5 @@
 import { Die } from "./die";
+import type { Color } from "go-dice-api/src/die";
 import IGoDice from "./goDice";
 
 if (!window.GoDice) {
@@ -23,8 +24,7 @@ class DiceSet extends EventEmitter {
   }
 }
 
-const diceSet = new DiceSet();
-module.exports = diceSet;
+export const diceSet = new DiceSet();
 
 GoDice.prototype.onDiceConnected = (dieId: string, diceInstance: IGoDice) => {
   if (diceSet.dice[dieId]) {
@@ -38,26 +38,26 @@ GoDice.prototype.onDiceConnected = (dieId: string, diceInstance: IGoDice) => {
   }
 };
 
-GoDice.prototype.onRollStart = (dieId) => {
+GoDice.prototype.onRollStart = (dieId: string) => {
   diceSet.dice[dieId].emit("rollStart");
 };
 
-GoDice.prototype.onBatteryLevel = (dieId, batteryLevel) => {
+GoDice.prototype.onBatteryLevel = (dieId: string, batteryLevel: number) => {
   diceSet.dice[dieId].emit("batteryLevel", batteryLevel);
 };
 
-GoDice.prototype.onDiceColor = (dieId, color) => {
+GoDice.prototype.onDiceColor = (dieId: string, color: Color) => {
   diceSet.dice[dieId].emit("color", color);
 };
 
-GoDice.prototype.onStable = (dieId, value) => {
+GoDice.prototype.onStable = (dieId: string, value: string) => {
   diceSet.dice[dieId].emit("stable", value);
 };
 
-GoDice.prototype.onFakeStable = (dieId, value) => {
+GoDice.prototype.onFakeStable = (dieId: string, value: string) => {
   diceSet.dice[dieId].emit("fakeStable", value);
 };
 
-GoDice.prototype.onMoveStable = (dieId, value) => {
+GoDice.prototype.onMoveStable = (dieId: string, value: string) => {
   diceSet.dice[dieId].emit("moveStable", value);
 };

@@ -242,8 +242,8 @@ export default class GoDice {
   ) {}
   onTiltStable(
     deviceId: string,
-    diceCurrentNumber: number,
-    xyzArray: [X: number, Y: number, Z: number]
+    xyzArray: [X: number, Y: number, Z: number],
+    diceCurrentNumber: number
   ) {}
   onMoveStable(
     deviceId: string,
