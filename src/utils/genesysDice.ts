@@ -1,13 +1,15 @@
 import { MapPlus } from "@carljmcgee/set-map-plus";
 import { useEffect, useState } from "react";
 import type {
+  genDieFaces,
+  genDieTypes,
   negDieFaces,
   negDieTypes,
   posDieFaces,
   posDieTypes,
 } from "../types/genesysDice";
 
-export const proficiencyDie = MapPlus<number, posDieFaces[]>([
+export const proficiencyDie = MapPlus<number, genDieFaces[]>([
   [1, ["triumph"]],
   [2, ["success"]],
   [3, ["advantage", "advantage"]],
@@ -22,7 +24,7 @@ export const proficiencyDie = MapPlus<number, posDieFaces[]>([
   [12, ["blank"]],
 ]);
 
-export const abilityDie = MapPlus<number, posDieFaces[]>([
+export const abilityDie = MapPlus<number, genDieFaces[]>([
   [1, ["success"]],
   [2, ["advantage", "success"]],
   [3, ["advantage"]],
@@ -33,7 +35,7 @@ export const abilityDie = MapPlus<number, posDieFaces[]>([
   [8, ["blank"]],
 ]);
 
-export const boostDie = MapPlus<number, posDieFaces[]>([
+const boostDie = MapPlus<number, genDieFaces[]>([
   [1, ["success"]],
   [2, ["advantage", "advantage"]],
   [3, ["advantage", "success"]],
@@ -42,7 +44,7 @@ export const boostDie = MapPlus<number, posDieFaces[]>([
   [6, ["blank"]],
 ]);
 
-export const challengeDie = MapPlus<number, negDieFaces[]>([
+export const challengeDie = MapPlus<number, genDieFaces[]>([
   [1, ["despair"]],
   [2, ["failure"]],
   [3, ["threat", "threat"]],
@@ -57,7 +59,7 @@ export const challengeDie = MapPlus<number, negDieFaces[]>([
   [12, ["blank"]],
 ]);
 
-export const difficultyDie = MapPlus<number, negDieFaces[]>([
+export const difficultyDie = MapPlus<number, genDieFaces[]>([
   [1, ["failure"]],
   [2, ["threat"]],
   [3, ["failure", "threat"]],
@@ -68,7 +70,7 @@ export const difficultyDie = MapPlus<number, negDieFaces[]>([
   [8, ["failure", "failure"]],
 ]);
 
-export const setbackDie = MapPlus<number, negDieFaces[]>([
+export const setbackDie = MapPlus<number, genDieFaces[]>([
   [1, ["failure"]],
   [2, ["threat"]],
   [3, ["threat"]],
@@ -77,117 +79,50 @@ export const setbackDie = MapPlus<number, negDieFaces[]>([
   [6, ["blank"]],
 ]);
 
-export function useProficiencyDie(value: number | undefined): posDieFaces[] {
-  const [faceValue, setValue] = useState<posDieFaces[]>(["blank"]);
-
-  if (!value) return faceValue;
-
-  useEffect(() => {
-    const roll = proficiencyDie.get(value);
-    if (roll) {
-      setValue(roll);
-    }
-  }, [value]);
-
-  return faceValue;
-}
-export function useAbilityDie(value: number | undefined): posDieFaces[] {
-  const [faceValue, setValue] = useState<posDieFaces[]>(["blank"]);
-
-  if (!value) return faceValue;
-
-  useEffect(() => {
-    const roll = abilityDie.get(value);
-    if (roll) {
-      setValue(roll);
-    }
-  }, [value]);
-
-  return faceValue;
-}
-export function useBoostDie(value: number | undefined): posDieFaces[] {
-  const [faceValue, setValue] = useState<posDieFaces[]>(["blank"]);
-
-  if (!value) return faceValue;
-
-  useEffect(() => {
-    const roll = boostDie.get(value);
-    if (roll) {
-      setValue(roll);
-    }
-  }, [value]);
-
-  return faceValue;
+export function proficiencyDieValue(value: string): genDieFaces[] {
+  const roll = proficiencyDie.get(Number.parseInt(value));
+  if (!roll) return ["blank"];
+  return roll;
 }
 
-export function useChallengeDie(value: number | undefined): negDieFaces[] {
-  const [faceValue, setValue] = useState<negDieFaces[]>(["blank"]);
-
-  if (!value) return faceValue;
-
-  useEffect(() => {
-    const roll = challengeDie.get(value);
-    if (roll) {
-      setValue(roll);
-    }
-  }, [value]);
-
-  return faceValue;
+export function abilityDieValue(value: string): genDieFaces[] {
+  const roll = abilityDie.get(Number.parseInt(value));
+  if (!roll) return ["blank"];
+  return roll;
 }
-export function useDifficultyDie(value: number | undefined): negDieFaces[] {
-  const [faceValue, setValue] = useState<negDieFaces[]>(["blank"]);
 
-  if (!value) return faceValue;
+export function boostDieValue(value: string): genDieFaces[] {
+  const roll = boostDie.get(Number.parseInt(value));
+  console.log(value);
 
-  useEffect(() => {
-    const roll = difficultyDie.get(value);
-    if (roll) {
-      setValue(roll);
-    }
-  }, [value]);
-
-  return faceValue;
+  if (!roll) return ["blank"];
+  return roll;
 }
-export function useSetbackDie(value: number | undefined): negDieFaces[] {
-  const [faceValue, setValue] = useState<negDieFaces[]>(["blank"]);
 
-  if (!value) return faceValue;
-
-  useEffect(() => {
-    const roll = setbackDie.get(value);
-    if (roll) {
-      setValue(roll);
-    }
-  }, [value]);
-
-  return faceValue;
+export function challengeDieValue(value: string): genDieFaces[] {
+  const roll = challengeDie.get(Number.parseInt(value));
+  if (!roll) return ["blank"];
+  return roll;
 }
-export function useGenesysValue(
-  value: number | undefined,
-  dieType: posDieTypes
-): posDieFaces[];
-export function useGenesysValue(
-  value: number | undefined,
-  dieType: negDieTypes
-): negDieFaces[];
-export function useGenesysValue(
-  value: number | undefined,
-  dieType: posDieTypes | negDieTypes
-): posDieFaces[] | negDieFaces[] {
-  if (dieType === "proficiency") {
-    return useProficiencyDie(value);
-  }
-  if (dieType === "ability") {
-    return useAbilityDie(value);
-  }
-  if (dieType === "boost") {
-    return useBoostDie(value);
-  }
-  if (dieType === "challenge") {
-    return useChallengeDie(value);
-  }
-  if (dieType === "difficulty") {
-    return useDifficultyDie(value);
-  }
-  return useSetbackDie(value);
+export function difficultyDieValue(value: string): genDieFaces[] {
+  const roll = difficultyDie.get(Number.parseInt(value));
+  if (!roll) return ["blank"];
+  return roll;
 }
+export function setbackDieValue(value: string): genDieFaces[] {
+  const roll = setbackDie.get(Number.parseInt(value));
+  if (!roll) return ["blank"];
+  return roll;
+}
+
+export const GenValueMap = MapPlus<
+  genDieTypes,
+  (value: string) => genDieFaces[]
+>([
+  ["proficiency", proficiencyDieValue],
+  ["ability", abilityDieValue],
+  ["boost", boostDieValue],
+  ["challenge", challengeDieValue],
+  ["difficulty", difficultyDieValue],
+  ["setback", setbackDieValue],
+]);

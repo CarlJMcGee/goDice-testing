@@ -4,8 +4,7 @@ import { useEffect, useState } from "react";
 import { setNumBetween, numBetween } from "@carljmcgee/lol-random";
 import DieDisplay from "./components/DieDisplay";
 import { LedColor } from "./utils/GoDiceApi";
-import GenesysDie from "./components/GenesysDisplay";
-import { DieFaces, posDieFaces } from "./types/genesysDice";
+import GenesysSet from "./components/GenesysSet";
 
 function App() {
   const [dice, requestDie] = useDiceSet();
@@ -18,13 +17,9 @@ function App() {
       value: number;
     }[]
   >([]);
-  const [posValues, setPosValues] = useState<posDieFaces[]>([]);
-  const [negValues, setNegValues] = useState<posDieFaces[]>([]);
   useEffect(() => {
     console.log(dice);
-    // console.log(posValues);
-    // console.log(negValues);
-  }, [dice, testDice, posValues]);
+  }, [dice]);
 
   function createDiceHandler() {
     const seeds = setNumBetween(3, 1, 100);
@@ -62,22 +57,7 @@ function App() {
         >
           Request Dice
         </button>
-        <button
-          className="text-blue-400 my-3 px-5 py-3 rounded-md bg-gray-800 hover:border-2 hover:border-cyan-400 hover:text-blue-200 hover:bg-slate-600"
-          onClick={createDiceHandler}
-        >
-          Add Test Die
-        </button>
-        <div className="grid grid-cols-1 md:grid-cols-3">
-          {testDice.map((die, i) => (
-            <GenesysDie
-              key={`${die.id}-testing`}
-              testDie={die}
-              index={i}
-              addToPos={setPosValues}
-            />
-          ))}
-        </div>
+        <GenesysSet dice={dice} />
         <div className="grid grid-cols-1 md:grid-cols-3">
           {dice.map((die, i) => (
             <DieDisplay key={die.id} die={die} index={i} />
