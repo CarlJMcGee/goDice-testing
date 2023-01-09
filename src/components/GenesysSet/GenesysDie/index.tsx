@@ -20,6 +20,9 @@ export interface IDieDisplayProps {
   addAdv: React.Dispatch<React.SetStateAction<number>>;
   addFail: React.Dispatch<React.SetStateAction<number>>;
   addThreat: React.Dispatch<React.SetStateAction<number>>;
+  addTri: React.Dispatch<React.SetStateAction<number>>;
+  addDes: React.Dispatch<React.SetStateAction<number>>;
+  setRolled: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export default function GenesysDie({
@@ -29,10 +32,13 @@ export default function GenesysDie({
   addAdv,
   addFail,
   addThreat,
+  addTri,
+  addDes,
+  setRolled,
 }: IDieDisplayProps) {
   const [label, setLabel] = useState(`Die #${i + 1}`);
   const [editing, setEditing] = useState(false);
-  const [dieType, setDieType] = useState<genDieTypes>("ability");
+  const [dieType, setDieType] = useState<genDieTypes>("boost");
   const [genvalueRtn, setGenVal] = useState<string>("");
 
   const dieColor = useDieColor(die);
@@ -69,6 +75,7 @@ export default function GenesysDie({
           break;
         case "triumph":
           addSucc((prev) => prev + 1);
+          addTri((prev) => prev + 1);
           break;
         case "failure":
           addFail((prev) => prev + 1);
@@ -78,35 +85,38 @@ export default function GenesysDie({
           break;
         case "despair":
           addFail((prev) => prev + 1);
+          addDes((prev) => prev + 1);
           break;
         case "blank":
           break;
       }
     });
+    setRolled(true);
   }, [value]);
 
   const borderColorMap = MapPlus<string, string>([
-    ["Black", "border-black"],
-    ["Red", "border-red-400"],
-    ["Green", "border-green-400"],
-    ["Blue", "border-blue-400"],
-    ["Yellow", "border-yellow-400"],
-    ["Orange", "border-orange-400"],
+    ["boost", "border-sky-600"],
+    ["ability", "border-green-600"],
+    ["proficiency", "border-yellow-600"],
+    ["challenge", "border-red-600"],
+    ["difficulty", "border-indigo-600"],
+    ["setback", "border-black"],
   ]);
   const bgColorMap = MapPlus<string, string>([
-    ["Black", "bg-gray-200"],
-    ["Red", "bg-red-200"],
-    ["Green", "bg-green-200"],
-    ["Blue", "bg-blue-200"],
-    ["Yellow", "bg-yellow-200"],
-    ["Orange", "bg-orange-200"],
+    ["boost", "bg-sky-400"],
+    ["ability", "bg-green-400"],
+    ["proficiency", "bg-yellow-400"],
+    ["challenge", "bg-red-400"],
+    ["difficulty", "bg-indigo-400"],
+    ["setback", "bg-gray-700"],
   ]);
+
   return (
     <div
-      className={`border-4 text-black flex flex-col justify-start ${
-        dieColor ? borderColorMap.get(dieColor) : "border-white"
+      className={`border-4 text- flex flex-col justify-start ${
+        dieColor ? borderColorMap.get(dieType) : "border-white"
       } ${
-        dieColor ? bgColorMap.get(dieColor) : "bg-gray-200"
+        dieColor ? bgColorMap.get(dieType) : "bg-gray-200"
       }  m-3 p-3 w-52 h-52`}
     >
       <div className="text-center">
@@ -136,9 +146,9 @@ export default function GenesysDie({
           } hover:bg-black hover:bg-opacity-30`}
           onChange={(e) => setDieType(e.target.value as genDieTypes)}
         >
+          <option value="boost">boost</option>
           <option value="ability">ability</option>
           <option value="proficiency">proficiency</option>
-          <option value="boost">boost</option>
           <option value="challenge">challenge</option>
           <option value="difficulty">difficulty</option>
           <option value="setback">setback</option>
@@ -155,12 +165,11 @@ export default function GenesysDie({
             {batteryLvl}%
           </span>
         </h3>
-        {/* <h3>Color: {dieColor}</h3> */}
       </div>
       <div className="flex justify-center items-center h-full text-center">
         {rolling ? <h3 className="text-4xl">Rolling...</h3> : null}
         {!rolling && value ? (
-          <h3 className="text-7xl text-black">{genvalueRtn}</h3>
+          <h3 className="text-2xl text-white">{genvalueRtn}</h3>
         ) : null}
       </div>
     </div>

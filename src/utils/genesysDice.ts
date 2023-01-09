@@ -10,7 +10,7 @@ import type {
 } from "../types/genesysDice";
 
 export const proficiencyDie = MapPlus<number, genDieFaces[]>([
-  [1, ["triumph"]],
+  [1, ["blank"]],
   [2, ["success"]],
   [3, ["advantage", "advantage"]],
   [4, ["advantage", "success"]],
@@ -21,26 +21,26 @@ export const proficiencyDie = MapPlus<number, genDieFaces[]>([
   [9, ["advantage", "success"]],
   [10, ["advantage", "success"]],
   [11, ["advantage", "advantage"]],
-  [12, ["blank"]],
+  [12, ["triumph"]],
 ]);
 
 export const abilityDie = MapPlus<number, genDieFaces[]>([
-  [1, ["success"]],
+  [1, ["blank"]],
   [2, ["advantage", "success"]],
   [3, ["advantage"]],
   [4, ["advantage", "advantage"]],
   [5, ["success"]],
   [6, ["success", "success"]],
   [7, ["advantage"]],
-  [8, ["blank"]],
+  [8, ["success"]],
 ]);
 
 const boostDie = MapPlus<number, genDieFaces[]>([
-  [1, ["success"]],
-  [2, ["advantage", "advantage"]],
-  [3, ["advantage", "success"]],
-  [4, ["advantage"]],
-  [5, ["blank"]],
+  [1, ["blank"]],
+  [2, ["success"]],
+  [3, ["advantage", "advantage"]],
+  [4, ["advantage", "success"]],
+  [5, ["advantage"]],
   [6, ["blank"]],
 ]);
 
@@ -71,11 +71,11 @@ export const difficultyDie = MapPlus<number, genDieFaces[]>([
 ]);
 
 export const setbackDie = MapPlus<number, genDieFaces[]>([
-  [1, ["failure"]],
-  [2, ["threat"]],
+  [1, ["blank"]],
+  [2, ["failure"]],
   [3, ["threat"]],
-  [4, ["failure"]],
-  [5, ["blank"]],
+  [4, ["threat"]],
+  [5, ["failure"]],
   [6, ["blank"]],
 ]);
 
@@ -93,8 +93,6 @@ export function abilityDieValue(value: string): genDieFaces[] {
 
 export function boostDieValue(value: string): genDieFaces[] {
   const roll = boostDie.get(Number.parseInt(value));
-  console.log(value);
-
   if (!roll) return ["blank"];
   return roll;
 }
