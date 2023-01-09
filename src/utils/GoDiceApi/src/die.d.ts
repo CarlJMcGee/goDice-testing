@@ -31,24 +31,24 @@ export default class Die extends EventEmitter {
   };
 
   on(event: "rollStart", handler: () => void): void;
-  on(event: "stable", handler: (value: number) => void): void;
-  on(event: "value", handler: (value: number) => void): void;
+  on(event: "stable", handler: (value: string) => void): void;
+  on(event: "value", handler: (value: string) => void): void;
   on(
     event: "tiltStable",
     handler: (
-      payload: [value: number, xyzAccRaw: [X: number, Y: number, Z: number]]
+      payload: [value: string, xyzAccRaw: [X: number, Y: number, Z: number]]
     ) => void
   ): void;
   on(
     event: "fakeStable",
     handler: (
-      payload: [value: number, xyzAccRaw: [X: number, Y: number, Z: number]]
+      payload: [value: string, xyzAccRaw: [X: number, Y: number, Z: number]]
     ) => void
   ): void;
   on(
     event: "moveStable",
     handler: (
-      payload: [value: number, xyzAccRaw: [X: number, Y: number, Z: number]]
+      payload: [value: string, xyzAccRaw: [X: number, Y: number, Z: number]]
     ) => void
   ): void;
   on(event: "batteryLevel", handler: (level: number) => void): void;
