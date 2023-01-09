@@ -16,30 +16,24 @@ import { DieTypes } from "../../../utils/GoDiceApi/src/die";
 export interface IDieDisplayProps {
   die: Die;
   index: number;
-  addSucc: React.Dispatch<React.SetStateAction<number>>;
-  addAdv: React.Dispatch<React.SetStateAction<number>>;
-  addFail: React.Dispatch<React.SetStateAction<number>>;
-  addThreat: React.Dispatch<React.SetStateAction<number>>;
-  addTri: React.Dispatch<React.SetStateAction<number>>;
-  addDes: React.Dispatch<React.SetStateAction<number>>;
+  setSucc: React.Dispatch<React.SetStateAction<number>>;
+  setAdv: React.Dispatch<React.SetStateAction<number>>;
+  setTri: React.Dispatch<React.SetStateAction<number>>;
   setRolled: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export default function GenesysDie({
   die,
   index: i,
-  addSucc,
-  addAdv,
-  addFail,
-  addThreat,
-  addTri,
-  addDes,
+  setSucc,
+  setAdv,
+  setTri,
   setRolled,
 }: IDieDisplayProps) {
   const [label, setLabel] = useState(`Die #${i + 1}`);
   const [editing, setEditing] = useState(false);
   const [dieType, setDieType] = useState<genDieTypes>("boost");
-  const [genvalueRtn, setGenVal] = useState<string>("");
+  const [genValueRtn, setGenVal] = useState<string>("");
 
   const dieColor = useDieColor(die);
   const batteryLvl = useBatteryLevel(die);
@@ -68,24 +62,24 @@ export default function GenesysDie({
     genValue.forEach((faceValue) => {
       switch (faceValue) {
         case "success":
-          addSucc((prev) => prev + 1);
+          setSucc((prev) => prev + 1);
           break;
         case "advantage":
-          addAdv((prev) => prev + 1);
+          setAdv((prev) => prev + 1);
           break;
         case "triumph":
-          addSucc((prev) => prev + 1);
-          addTri((prev) => prev + 1);
+          setSucc((prev) => prev + 1);
+          setTri((prev) => prev + 1);
           break;
         case "failure":
-          addFail((prev) => prev + 1);
+          setSucc((prev) => prev - 1);
           break;
         case "threat":
-          addThreat((prev) => prev + 1);
+          setAdv((prev) => prev - 1);
           break;
         case "despair":
-          addFail((prev) => prev + 1);
-          addDes((prev) => prev + 1);
+          setSucc((prev) => prev - 1);
+          setTri((prev) => prev - 1);
           break;
         case "blank":
           break;
@@ -169,7 +163,7 @@ export default function GenesysDie({
       <div className="flex justify-center items-center h-full text-center">
         {rolling ? <h3 className="text-4xl">Rolling...</h3> : null}
         {!rolling && value ? (
-          <h3 className="text-2xl text-white">{genvalueRtn}</h3>
+          <h3 className="text-2xl text-white">{genValueRtn}</h3>
         ) : null}
       </div>
     </div>
