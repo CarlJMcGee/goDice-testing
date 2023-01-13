@@ -1,44 +1,36 @@
-import { numBetween } from "@carljmcgee/lol-random";
 import { MapPlus } from "@carljmcgee/set-map-plus";
-import { asyncTimeOut } from "@carljmcgee/timey-wimey";
-import { Die, LedColor } from "../../../utils/GoDiceApi";
+import { Die } from "../../../utils/GoDiceApi";
 import { useEffect, useState } from "react";
 import { genDieFaces, genDieTypes } from "../../../types/genesysDice";
-import { GenValueMap } from "../../../utils/genesysDice";
 import {
   useBatteryLevel,
   useDieColor,
-  useDieValue,
   useRolling,
 } from "../../../utils/GoDiceReact";
 import { DieTypes } from "../../../utils/GoDiceApi/src/die";
+import { useGenesysDie } from "go-dice-genesys-hooks";
 
 export interface IDieDisplayProps {
   die: Die;
   index: number;
-  setSucc: React.Dispatch<React.SetStateAction<number>>;
-  setAdv: React.Dispatch<React.SetStateAction<number>>;
-  setTri: React.Dispatch<React.SetStateAction<number>>;
+  inputResult: (values: genDieFaces[]) => void;
   setRolled: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export default function GenesysDie({
   die,
   index: i,
-  setSucc,
-  setAdv,
-  setTri,
+  inputResult,
   setRolled,
 }: IDieDisplayProps) {
   const [label, setLabel] = useState(`Die #${i + 1}`);
   const [editing, setEditing] = useState(false);
   const [dieType, setDieType] = useState<genDieTypes>("boost");
-  const [genValueRtn, setGenVal] = useState<string>("");
 
   const dieColor = useDieColor(die);
   const batteryLvl = useBatteryLevel(die);
   const rolling = useRolling(die);
-  const value = useDieValue(die);
+  const value = useGenesysDie(die, dieType);
 
   const genToDFace: Record<genDieTypes, DieTypes> = {
     ability: "D8",
@@ -54,38 +46,11 @@ export default function GenesysDie({
   }, [dieType]);
 
   useEffect(() => {
-    const getGenValue = GenValueMap.get(dieType);
-    if (!getGenValue) return;
-    const genValue = getGenValue(value);
-    setGenVal(genValue.join(" + "));
-
-    genValue.forEach((faceValue) => {
-      switch (faceValue) {
-        case "success":
-          setSucc((prev) => prev + 1);
-          break;
-        case "advantage":
-          setAdv((prev) => prev + 1);
-          break;
-        case "triumph":
-          setSucc((prev) => prev + 1);
-          setTri((prev) => prev + 1);
-          break;
-        case "failure":
-          setSucc((prev) => prev - 1);
-          break;
-        case "threat":
-          setAdv((prev) => prev - 1);
-          break;
-        case "despair":
-          setSucc((prev) => prev - 1);
-          setTri((prev) => prev - 1);
-          break;
-        case "blank":
-          break;
-      }
-    });
+    if (!value) {
+      return;
+    }
     setRolled(true);
+    inputResult(value);
   }, [value]);
 
   const borderColorMap = MapPlus<string, string>([
@@ -135,17 +100,17 @@ export default function GenesysDie({
         <select
           name="dieType"
           id="dieType"
-          className={`bg-transparent border-2 bg-black bg-opacity-20 ${
+          className={`text-center bg-transparent border-2 bg-black bg-opacity-20 ${
             dieColor && borderColorMap.get(dieColor)
           } hover:bg-black hover:bg-opacity-30`}
           onChange={(e) => setDieType(e.target.value as genDieTypes)}
         >
-          <option value="boost">boost</option>
-          <option value="ability">ability</option>
-          <option value="proficiency">proficiency</option>
-          <option value="challenge">challenge</option>
-          <option value="difficulty">difficulty</option>
-          <option value="setback">setback</option>
+          <option value="boost">boost - D6</option>
+          <option value="ability">ability - D8</option>
+          <option value="proficiency">proficiency - D12</option>
+          <option value="setback">setback - D6</option>
+          <option value="difficulty">difficulty - D8</option>
+          <option value="challenge">challenge - D12</option>
         </select>
         <h3>
           Battery currently at{" "}
@@ -163,7 +128,7 @@ export default function GenesysDie({
       <div className="flex justify-center items-center h-full text-center">
         {rolling ? <h3 className="text-4xl">Rolling...</h3> : null}
         {!rolling && value ? (
-          <h3 className="text-2xl text-white">{genValueRtn}</h3>
+          <h3 className="text-2xl text-white">{value.join(" + ")}</h3>
         ) : null}
       </div>
     </div>
